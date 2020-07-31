@@ -56,7 +56,7 @@ jobs:
           ebtables dnsmasq-base libxslt-dev libxml2-dev libvirt-dev zlib1g-dev
           ruby-dev
         # install vagrant
-        - sudo wget -nv
+        - > sudo wget -nv
           https://releases.hashicorp.com/vagrant/2.2.9/vagrant_2.2.9_x86_64.deb
         - sudo dpkg -i vagrant_2.2.9_x86_64.deb
         # install vagrant-libvirt plugin
