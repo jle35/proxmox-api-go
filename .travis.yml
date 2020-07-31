@@ -15,7 +15,7 @@ stages:
     if: 'branch = master AND type != pull_request'
 
 
-jobs: 
+jobs:
   fast_finish: true
   include:
 
@@ -24,28 +24,21 @@ jobs:
       language: 'node_js'
       node_js: 'lts/*'
       env: 'Lint'
-      name: 'Lint: commitlint'
+      name: 'Lint: commitlint, yamllint'
       before_install: 'skip'
       script:
         # Install and run `commitlint`
         - npm i -D @commitlint/config-conventional
                    @commitlint/travis-cli
         - commitlint-travis
-
-    # Rubocop
-    - stage: test
-      language: node_js
-      node_js: lts/*
-      env: Lint_rubocop
-      name: 'Lint: rubocop'
-      before_install: skip
-      script:
-        # Install and run `rubocop`
+        - pip install --user yamllint>=1.17.0
+        - yamllint -s .
         - gem install rubocop
         - rubocop -d
 
     # Test with Vagrant
     - stage: test
+      name: 'Test: API tests'
       language: go
       go:
         - 1.14.x
@@ -55,18 +48,9 @@ jobs:
       env:
         global:
           - GO111MODULE=on
-      install:
-        # install build dependencies for vagrant-libvirt
-        - sudo apt-get update && sudo apt-get build-dep vagrant ruby-libvirt && sudo apt-get install -y qemu libvirt-daemon-system libvirt-clients ebtables dnsmasq-base libxslt-dev libxml2-dev libvirt-dev zlib1g-dev ruby-dev
-        # install vagrant
-        - sudo wget -nv https://releases.hashicorp.com/vagrant/2.2.9/vagrant_2.2.9_x86_64.deb
-        - sudo dpkg -i vagrant_2.2.9_x86_64.deb
-        # install vagrant-libvirt plugin
-        - sudo vagrant plugin install vagrant-libvirt
       script:
         - sudo vagrant up --provider=libvirt
         - make test
-
 
     # Sementic Release
     - stage: 'release'
@@ -88,9 +72,11 @@ jobs:
 
       deploy:
         provider: 'script'
-        # Opt-in to `dpl v2` to complete the Travis build config validation (beta)
+        # Opt-in to `dpl v2` to complete the Travis build config
+        # validation (beta)
         # * https://docs.travis-ci.com/user/build-config-validation
-        # Deprecated `skip_cleanup` can now be avoided, `cleanup: false` is by default
+        # Deprecated `skip_cleanup` can now be avoided, `cleanup: false`
+        # is by default
         edge: true
         # Run `semantic-release`
         script: 'npx semantic-release@15.14'
