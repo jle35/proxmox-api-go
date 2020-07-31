@@ -9,7 +9,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/Telmate/proxmox-api-go/proxmox"
+	"github.com/jle35/proxmox-api-go/proxmox"
 )
 
 func main() {
