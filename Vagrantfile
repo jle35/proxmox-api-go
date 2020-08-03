@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Vagrant.configure('2') do |config|
-  config.vm.box = 'debian/buster64'
+  config.vm.box = 'jle35/pve6.2'
 
   config.vm.boot_timeout = 1800
   config.vm.synced_folder '.', '/vagrant', disabled: true
