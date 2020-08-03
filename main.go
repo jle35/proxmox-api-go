@@ -214,6 +214,21 @@ func main() {
 		}
 		log.Printf("VM %d is moved on %s\n", vmid, args[1])
 
+	case "migrate-test":
+		vmr := proxmox.NewVmRef(vmid)
+		c.GetVmInfo(vmr)
+		args := flag.Args()
+		if len(args) <= 1 {
+			fmt.Printf("Missing target node\n")
+			os.Exit(1)
+		}
+		_, err := c.MigrateNode(vmr, args[1], true)
+
+		if err != nil {
+			log.Printf("Error to move %+v\n", err)
+			os.Exit(1)
+		}
+		log.Printf("VM %d is moved on %s\n", vmid, args[1])
 	default:
 		fmt.Printf("unknown action, try start|stop vmid\n")
 	}
